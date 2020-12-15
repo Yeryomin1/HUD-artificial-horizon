@@ -2,15 +2,15 @@ class Attitude {
     constructor(camera, threeScene, radius, maxPitch, maxRoll) {
         //устанавливаем кратный 30 с запасом в большую сторону предел значений углов:
         //тангаж:
-        if (maxPitch > 90) maxPitch = 90; 
-        this.maxPitch = maxPitch;              
+        if (maxPitch > 90) maxPitch = 90;
+        this.maxPitch = maxPitch;
         maxPitch /= 30;
         maxPitch = Math.ceil(maxPitch) * 30;
 
 
         //крен:
-        if (maxRoll > 90) maxRoll = 90;  
-        this.maxRoll = maxRoll;             
+        if (maxRoll > 90) maxRoll = 90;
+        this.maxRoll = maxRoll;
         maxRoll /= 30;
         maxRoll = Math.ceil(maxRoll) * 30;
 
@@ -29,7 +29,6 @@ class Attitude {
         //создаем линию контура:
         this.skeleton = new THREE.Line(geometry, material);
         threeScene.add(this.skeleton);
-
 
 
         //создаем шкалу тангажа:
@@ -76,47 +75,40 @@ class Attitude {
                 threeScene.add(this.rollLines[this.rollLines.length - 1]);
             }
         }
-        
 
 
-//текст, если будут метки крена, то они должны рисоваться в update, танг только в constructor:
-for (let i = 0; i<7; i++){
-      let labelText = document.createElement('div');
-  labelText.style.position = 'absolute';
-  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-  labelText.style.width = 100;
-  labelText.style.height = 100;
-  labelText.style.color = "Lime";
-  labelText.style.fontSize = window.innerHeight/35+"px";
-  labelText.innerHTML = Math.abs(maxPitch - pitchScaleStep * i);
+        //текст, если будут метки крена, то они должны рисоваться в update, танг только в constructor:
+        for (let i = 0; i < 7; i++) {
+            let labelText = document.createElement('div');
+            labelText.style.position = 'absolute';
+            //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+            labelText.style.width = 100;
+            labelText.style.height = 100;
+            labelText.style.color = "Lime";
+            labelText.style.fontSize = window.innerHeight / 35 + "px";
+            labelText.innerHTML = Math.abs(maxPitch - pitchScaleStep * i);
 
-  let position3D = textLabels[i];
-  let position2D = toXYCoords (position3D);
+            let position3D = textLabels[i];
+            let position2D = toXYCoords(position3D);
 
-  labelText.style.top = (position2D.y)*100/window.innerHeight - 2 + '%';
-  labelText.style.left = (position2D.x)*100/window.innerWidth - 4 + '%';
-  document.body.appendChild(labelText);
-}
-
-
-
-  function toXYCoords (pos) {
-
-    let vector = pos.project(camera);
-    vector.x = (vector.x + 1)/2 * window.innerWidth;
-    vector.y = -(vector.y - 1)/2 * window.innerHeight;
-    
-    return vector;
-}
+            labelText.style.top = (position2D.y) * 100 / window.innerHeight - 2 + '%';
+            labelText.style.left = (position2D.x) * 100 / window.innerWidth - 4 + '%';
+            document.body.appendChild(labelText);
+        }
 
 
+        function toXYCoords(pos) {
 
+            let vector = pos.project(camera);
+            vector.x = (vector.x + 1) / 2 * window.innerWidth;
+            vector.y = -(vector.y - 1) / 2 * window.innerHeight;
 
-
-
-
+            return vector;
+        }
 
     }
+
+
     update(roll, pitch) {
         //проверка выхода за ограничение:
         if (pitch > this.maxPitch) pitch = this.maxPitch;

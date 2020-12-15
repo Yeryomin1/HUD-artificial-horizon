@@ -1,7 +1,5 @@
 window.onload = function () {
 
-
-
     class External {
         constructor(threeScene, objNum) {
             this.objects = new THREE.Object3D();
@@ -70,8 +68,8 @@ window.onload = function () {
     }
 
     vehicle.update = function () {
-camera.aspect = window.innerWidth/window.innerHeight;
-camera.updateProjectionMatrix();
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
 
 
         if (vehicle.lastPitch != vehicle.pitch) {
