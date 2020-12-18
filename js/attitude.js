@@ -63,10 +63,12 @@ class Attitude {
             if (i != 3 && i != 9) {//не ставим верхнюю и нижнюю метки
                 let lineGeometry = new THREE.Geometry();
                 //края линии метки:
-                lineGeometry.vertices.push(new THREE.Vector3(-Math.cos(i * rollScaleStep * Math.PI / 180) * radius * 1.1,
+                lineGeometry.vertices.push(new THREE.Vector3(-Math.cos(
+                    i * rollScaleStep * Math.PI / 180) * radius * 1.1,
                     Math.sin(i * rollScaleStep * Math.PI / 180) * radius * 1.1,
                     0));
-                lineGeometry.vertices.push(new THREE.Vector3(-Math.cos(i * rollScaleStep * Math.PI / 180) * radius * 0.9,
+                lineGeometry.vertices.push(new THREE.Vector3(-Math.cos(
+                    i * rollScaleStep * Math.PI / 180) * radius * 0.9,
                     Math.sin(i * rollScaleStep * Math.PI / 180) * radius * 0.9,
                     0));
 
