@@ -34,61 +34,58 @@ class Attitude {
         //создаем шкалу тангажа:
         let pitchScaleStep = maxPitch / 3;
 
-        let textLabels = [];//позиции текстовых меток шкалы
+        let textLabelsPos = [];//позиции текстовых меток шкалы
         for (let i = 0; i < 7; i++) {
             let lineGeometry = new THREE.Geometry();
-            //левая точка
-            lineGeometry.vertices.push(new THREE.Vector3(-radius / 10,
-                skeletonLength * Math.sin((maxPitch - pitchScaleStep * i) * Math.PI / 180),
-                -skeletonLength * Math.cos((maxPitch - pitchScaleStep * i) * Math.PI / 180))); //x, y, z
-            //правая точка
-            lineGeometry.vertices.push(new THREE.Vector3(radius / 10,
-                skeletonLength * Math.sin((maxPitch - pitchScaleStep * i) * Math.PI / 180),
-                -skeletonLength * Math.cos((maxPitch - pitchScaleStep * i) * Math.PI / 180))); //x, y, z
 
+            //левый и правый края линии метки:
+            let leftPoint = new THREE.Vector3(-radius / 10,
+                skeletonLength * Math.sin((maxPitch - pitchScaleStep * i) * Math.PI / 180),
+                -skeletonLength * Math.cos((maxPitch - pitchScaleStep * i) * Math.PI / 180));
+            let rightPoint = new THREE.Vector3();
+            rightPoint.copy(leftPoint);
+            rightPoint.x += (radius / 5);
+            //линия метки:
+            lineGeometry.vertices.push(leftPoint);
+            lineGeometry.vertices.push(rightPoint);
             let line = new THREE.Line(lineGeometry, material);
             threeScene.add(line);
-
-            //позиция текстовой метки(попробовать добавлять текущую lineGeometry? 
-            //- оптимизировать, убрать дублирование!!!)
-            textLabels.push(new THREE.Vector3(-radius / 10,
-                skeletonLength * Math.sin((maxPitch - pitchScaleStep * i) * Math.PI / 180),
-                -skeletonLength * Math.cos((maxPitch - pitchScaleStep * i) * Math.PI / 180)))
+            //позиция текстовой метки
+            let textPos = new THREE.Vector3();
+            textPos.copy(leftPoint);
+            textLabelsPos.push(textPos);
         }
 
         //создаем шкалу крена:
         let rollScaleStep = maxPitch / 3;
         this.rollLines = [];
         for (let i = 0; i < 12; i++) {
-            if (i != 3 && i != 9) {//не ставим врхнюю и нижнюю метки
+            if (i != 3 && i != 9) {//не ставим верхнюю и нижнюю метки
                 let lineGeometry = new THREE.Geometry();
-                //левая точка
+                //края линии метки:
                 lineGeometry.vertices.push(new THREE.Vector3(-Math.cos(i * rollScaleStep * Math.PI / 180) * radius * 1.1,
                     Math.sin(i * rollScaleStep * Math.PI / 180) * radius * 1.1,
-                    0)); //x, y, z
-                //правая точка
+                    0));
                 lineGeometry.vertices.push(new THREE.Vector3(-Math.cos(i * rollScaleStep * Math.PI / 180) * radius * 0.9,
                     Math.sin(i * rollScaleStep * Math.PI / 180) * radius * 0.9,
-                    0)); //x, y, z
+                    0));
 
                 this.rollLines.push(new THREE.Line(lineGeometry, material));
                 threeScene.add(this.rollLines[this.rollLines.length - 1]);
             }
         }
 
-
-        //текст, если будут метки крена, то они должны рисоваться в update, танг только в constructor:
+        //текстовые метки:
         for (let i = 0; i < 7; i++) {
             let labelText = document.createElement('div');
             labelText.style.position = 'absolute';
-            //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
             labelText.style.width = 100;
             labelText.style.height = 100;
             labelText.style.color = "Lime";
             labelText.style.fontSize = window.innerHeight / 35 + "px";
             labelText.innerHTML = Math.abs(maxPitch - pitchScaleStep * i);
 
-            let position3D = textLabels[i];
+            let position3D = textLabelsPos[i];
             let position2D = toXYCoords(position3D);
 
             labelText.style.top = (position2D.y) * 100 / window.innerHeight - 2 + '%';
@@ -121,7 +118,7 @@ class Attitude {
         this.skeleton.rotation.z = -roll * Math.PI / 180;
         this.skeleton.rotation.x = pitch * Math.PI / 180;
 
-        //перерисовываем только отметки крена:
+        //перемещаем только отметки крена:
         let marksNum = this.rollLines.length;
         for (let i = 0; i < marksNum; i++)
             this.rollLines[i].rotation.x = pitch * Math.PI / 180;
