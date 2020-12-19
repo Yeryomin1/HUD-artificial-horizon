@@ -52,8 +52,8 @@ window.onload = function () {
 
     function init() {
         let gui = new dat.GUI();
-        gui.add(vehicle, 'pitch').min(-90).max(90).step(1);
-        gui.add(vehicle, 'roll').min(-90).max(90).step(1);
+        gui.add(vehicle, 'pitch').min(-85).max(85).step(1);
+        gui.add(vehicle, 'roll').min(-85).max(85).step(1);
         gui.add(vehicle, 'speed').min(-50).max(50).step(1);
 
         let width = window.innerWidth;
@@ -80,7 +80,7 @@ window.onload = function () {
         //таймер
         vehicle.time = new Date();
         //искусственный горизонт
-        vehicle.attitude = new Attitude(camera, scene, 0.25, 70, 70);
+        vehicle.attitude = new Attitude(camera, scene, 0.25, 85, 85);
         //внешние объекты
         vehicle.external = new External(scene, 20);
     }

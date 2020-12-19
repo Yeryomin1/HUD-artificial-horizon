@@ -1,19 +1,15 @@
 class Attitude {
-    constructor(camera, threeScene, radius, maxPitch, maxRoll) {
-        //устанавливаем кратный 30 с запасом в большую сторону предел значений углов:
+    constructor(camera, scene, radius, maxPitch, maxRoll) {
         //тангаж:
+        //устанавливаем кратный 30 с запасом в большую сторону предел значений угла:
         if (maxPitch > 90) maxPitch = 90;
         this.maxPitch = maxPitch;
         maxPitch /= 30;
         maxPitch = Math.ceil(maxPitch) * 30;
 
-
         //крен:
         if (maxRoll > 90) maxRoll = 90;
         this.maxRoll = maxRoll;
-        maxRoll /= 30;
-        maxRoll = Math.ceil(maxRoll) * 30;
-
 
         //определяем длину силуэта:
         let skeletonLength = radius / Math.sin(maxPitch * Math.PI / 180);
@@ -28,8 +24,7 @@ class Attitude {
         let material = new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 1 });
         //создаем линию контура:
         this.skeleton = new THREE.Line(geometry, material);
-        threeScene.add(this.skeleton);
-
+        scene.add(this.skeleton);
 
         //создаем шкалу тангажа:
         let pitchScaleStep = maxPitch / 3;
@@ -49,7 +44,7 @@ class Attitude {
             lineGeometry.vertices.push(leftPoint);
             lineGeometry.vertices.push(rightPoint);
             let line = new THREE.Line(lineGeometry, material);
-            threeScene.add(line);
+            scene.add(line);
             //позиция текстовой метки
             let textPos = new THREE.Vector3();
             textPos.copy(leftPoint);
@@ -57,7 +52,7 @@ class Attitude {
         }
 
         //создаем шкалу крена:
-        let rollScaleStep = maxPitch / 3;
+        let rollScaleStep = 30;
         this.rollLines = [];
         for (let i = 0; i < 12; i++) {
             if (i != 3 && i != 9) {//не ставим верхнюю и нижнюю метки
@@ -73,7 +68,7 @@ class Attitude {
                     0));
 
                 this.rollLines.push(new THREE.Line(lineGeometry, material));
-                threeScene.add(this.rollLines[this.rollLines.length - 1]);
+                scene.add(this.rollLines[this.rollLines.length - 1]);
             }
         }
 
@@ -88,7 +83,7 @@ class Attitude {
             labelText.innerHTML = Math.abs(maxPitch - pitchScaleStep * i);
 
             let position3D = textLabelsPos[i];
-            let position2D = toXYCoords(position3D);
+            let position2D = to2D(position3D);
 
             labelText.style.top = (position2D.y) * 100 / window.innerHeight - 2 + '%';
             labelText.style.left = (position2D.x) * 100 / window.innerWidth - 4 + '%';
@@ -96,11 +91,11 @@ class Attitude {
         }
 
 
-        function toXYCoords(pos) {
+        function to2D(pos) {
 
             let vector = pos.project(camera);
-            vector.x = (vector.x + 1) / 2 * window.innerWidth;
-            vector.y = -(vector.y - 1) / 2 * window.innerHeight;
+            vector.x = window.innerWidth * (vector.x + 1) / 2;
+            vector.y = -window.innerHeight * (vector.y - 1) / 2;
 
             return vector;
         }
